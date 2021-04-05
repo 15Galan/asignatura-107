@@ -138,3 +138,64 @@ dimnames(tabla) <- list(X,Y)
 ajuste <- lm(y ~x)
 
 plot(tabla)
+
+
+
+# EJERCICIO 13 =================================================================
+
+# Datos del enunciado: tabla
+x <- c(2,4,6,8,10,12)
+y <- c(10,19,29,40,48,56)
+
+
+# Momentos
+m11 <- mean(x*y)
+m20 <- mean(x*x)
+
+# Pendiente
+pendiente <- m11/m20
+
+
+# Modelo
+modelo <- lm(y ~ x + 0)  # Usar '+ 0' indica que no se quiere término independiente
+
+y2 <- modelo$coefficients[1]*x
+
+
+# Representacion
+plot(x,y, xlim=c(0,15), ylim=c(0,60))
+abline(modelo, col=2)
+
+
+
+# EJERCICIO 15 =================================================================
+
+# Datos del enunciado: valores
+v <- c(2,4,6,8)
+
+
+# Apartado (a) -----------------------------------------------------------------
+media    <- mean(v)
+varianza <- var(v)
+
+
+# Apartado (b) -----------------------------------------------------------------
+# Caso 1
+v1 <- c(2,4,6)
+
+media_1    <- mean(v1)
+varianza_1 <- var(v1)
+
+
+# Caso 2
+v2 <- c(2,4,5,6)
+
+media_2    <- mean(v2)
+varianza_2 <- var(v2)
+
+
+# Caso 3
+v3 <- c(2,4,6,9)
+
+media_3    <- mean(v3)
+varianza_3 <- var(v3)
