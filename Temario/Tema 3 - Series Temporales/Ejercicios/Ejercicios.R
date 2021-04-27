@@ -56,3 +56,53 @@ serie <- ts(poblacion, start=c(1973,1))
   # Apartado (c) ---------------------------------------------------------------
   tabla <- matrix(c(tenden4, tenden5, predic), byrow=T, nrow=3)
   
+
+
+# EJERCICIO 02
+  # Resuelto en Notion
+
+
+
+# EJERCICIO 03 ================================================================
+
+# Datos del enunciado: tabla
+produccion <- c(3.9, 4, 4.8, 5.1, 5, 5.5, 6.1, 6.3, 6.9)
+
+# Crear un objeto de tipo serie temporal
+serie <- ts(produccion, start=c(2016,1), frequency=3)
+
+
+# Obtener la tendencia
+filtro <-  c(1, 1, 1) / 3
+tenden <- filter(serie, filtro)
+
+
+# Representacion grafica
+plot(serie)
+lines(tenden, col=2)
+
+
+# Obtener la Comp. Estacionaria (E)
+esta <- serie / tenden
+
+
+# Eliminar la Comp. Aleatoria
+data   <- matrix(esta, ncol=3, byrow=T)
+medias <- colMeans(data, na.rm=T)
+
+  # La media de las columnas debería ser 1, pero
+  # como no es el caso, hay que normalizarla
+  mean(medias)
+
+  # Normalizar la media de las columnas
+  norm <- medias / mean(medias)
+
+
+# Nueva serie temporal
+esta2 <- ts(rep(norm, 3), frequency=3)
+
+# Serie desestacionalizada
+deses <- serie / esta2
+
+# Obtener la Comp. Aleatoria (A)
+alea <- esta2 / norm
