@@ -41,22 +41,29 @@ library("tidyverse")
 # APARTADO 04 -----------------------------------------------------------------
 
   # Medias
-  datosMedios <- c(peso_M = mean(datos$peso), altura_M = mean(datos$altura),
-                   edad_M = mean(datos$edad), tabaco_M = mean(datos$tabaco),
-                   ubes_M = mean(datos$ubes), carne_M = mean(datos$carneRoja),
-                   verduras_M = mean(datos$verduras), deporte_M = mean(datos$deporte),
-                   droga_M = mean(datos$drogas), estPad_M = mean(datos$nivEstPad),
-                   estudios_M = mean(datos$nivEstudios), ingresos_M = mean(datos$nivIngresos),
-                   IMC_M = mean(datos$IMC))
+  datosMedios <- c(peso_M     = mean(datos$peso),
+                   altura_M   = mean(datos$altura),
+                   edad_M     = mean(datos$edad),
+                   tabaco_M   = mean(datos$tabaco),
+                   ubes_M     = mean(datos$ubes),
+                   carne_M    = mean(datos$carneRoja),
+                   verduras_M = mean(datos$verduras),
+                   deporte_M  = mean(datos$deporte),
+                   droga_M    = mean(datos$drogas),
+                   IMC_M      = mean(datos$IMC))
 
   # Desviaciones tipicas
-  datosDesviados <- c(peso_DT = sd(datos$peso), altura_DT = sd(datos$altura),
-                      edad_DT = sd(datos$edad), tabaco_DT = sd(datos$tabaco),
-                      ubes_DT = sd(datos$ubes), carne_DT = sd(datos$carneRoja),
-                      verduras_DT = sd(datos$verduras), deporte_DT = sd(datos$deporte),
-                      droga_DT = sd(datos$drogas), estPad_DT = sd(datos$nivEstPad),
-                      estudios_DT = sd(datos$nivEstudios), ingresos_DT = sd(datos$nivIngresos),
-                      IMC_DT = sd(datos$IMC))
+  datosDesviados <- c(peso_DT     = sd(datos$peso),
+                      altura_DT   = sd(datos$altura),
+                      edad_DT     = sd(datos$edad),
+                      tabaco_DT   = sd(datos$tabaco),
+                      ubes_DT     = sd(datos$ubes),
+                      carne_DT    = sd(datos$carneRoja),
+                      verduras_DT = sd(datos$verduras),
+                      deporte_DT  = sd(datos$deporte),
+                      droga_DT    = sd(datos$drogas),
+                      IMC_DT      = sd(datos$IMC))
+
 
 # APARTADO 05 -----------------------------------------------------------------
 
