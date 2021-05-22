@@ -57,3 +57,23 @@ library("tidyverse")
                       droga_DT = sd(datos$drogas), estPad_DT = sd(datos$nivEstPad),
                       estudios_DT = sd(datos$nivEstudios), ingresos_DT = sd(datos$nivIngresos),
                       IMC_DT = sd(datos$IMC))
+
+# APARTADO 05 -----------------------------------------------------------------
+
+  # Modelos
+  mod01 <- lm(IMC ~ sexo, datos)
+  mod02 <- lm(IMC ~ edad, datos)
+  mod03 <- lm(IMC ~ tabaco, datos)
+  mod04 <- lm(IMC ~ ubes, datos)
+  mod05 <- lm(IMC ~ carneRoja, datos)
+  mod06 <- lm(IMC ~ verduras, datos)
+  mod07 <- lm(IMC ~ deporte, datos)
+  mod08 <- lm(IMC ~ drogas, datos)
+  mod09 <- lm(IMC ~ nivEstPad, datos)
+  mod10 <- lm(IMC ~ nivEstudios, datos)
+  mod11 <- lm(IMC ~ nivIngresos, datos)
+  
+    # Cada variable anterior contiene:
+    # * El coeficiente de regresion (modXX$coefficients).
+    # * El coeficiente de determinacion (summary(modXX)$r.squared).
+  
