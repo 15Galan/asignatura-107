@@ -6,12 +6,8 @@
 # =============================================================================
 
 
-# Instalacion de paquetes necesarios
-install.packages("readr")
-
-# Importacion de paquetes
-library("datasets")
-library("readr")
+# Importacion de paquetes necesarios
+library("tidyverse")
 
 
 # APARTADO 01 -----------------------------------------------------------------
