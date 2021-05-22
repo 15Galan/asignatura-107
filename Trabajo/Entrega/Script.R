@@ -10,6 +10,7 @@
 library("tidyverse")
 
 
+
 # APARTADO 01 -----------------------------------------------------------------
 
   # Usando la funcion 'read_csv' del paquete 'readr'
@@ -26,8 +27,9 @@ library("tidyverse")
 
   # Se crea la columna 'IMC' segun el enunciado
   datos$IMC <- datos$peso / datos$altura^2
-
-
+  
+  
+  
 # APARTADO 03 -----------------------------------------------------------------
 
   # Se limpian las columnas con algun NA de los datos,
@@ -36,8 +38,9 @@ library("tidyverse")
 
     # Esta nueva variable 'datos' es de un tamaño menor,
     # ya que no cuenta con algunas de sus columnas anteriores
-
-
+  
+  
+  
 # APARTADO 04 -----------------------------------------------------------------
 
   # Medias
@@ -63,8 +66,9 @@ library("tidyverse")
                       deporte_DT  = sd(datos$deporte),
                       droga_DT    = sd(datos$drogas),
                       IMC_DT      = sd(datos$IMC))
-
-
+  
+  
+  
 # APARTADO 05 -----------------------------------------------------------------
 
   # Modelos
@@ -84,7 +88,8 @@ library("tidyverse")
     # * El coeficiente de regresion (modXX$coefficients).
     # * El coeficiente de determinacion (summary(modXX)$r.squared).
   
-
+  
+  
 # APARTADO 06 -----------------------------------------------------------------
   
   # Graficos de dispersion (variables cuantitativas)
