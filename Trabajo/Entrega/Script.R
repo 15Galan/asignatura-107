@@ -14,7 +14,12 @@ library("tidyverse")
 
   # Usando la funcion 'read_csv' del paquete 'readr'
   # se exporta el fichero con formato 'tibble'.
-  datos <- read_csv("../Recursos/12306.csv")
+  datos <- read_csv("../Recursos/12306.csv", col_types=cols(sexo=col_factor(),
+                                                            dietaEsp=col_factor(),
+                                                            nivEstPad=col_factor(),
+                                                            nivEstudios=col_factor(),
+                                                            nivIngresos=col_factor()))
+
 
 
 # APARTADO 02 -----------------------------------------------------------------
