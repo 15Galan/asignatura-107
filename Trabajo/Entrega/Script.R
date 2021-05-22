@@ -77,3 +77,29 @@ library("tidyverse")
     # * El coeficiente de regresion (modXX$coefficients).
     # * El coeficiente de determinacion (summary(modXX)$r.squared).
   
+
+# APARTADO 06 -----------------------------------------------------------------
+  
+  # Graficos de dispersion (variables cuantitativas)
+  plot(datos$IMC, datos$edad)
+  abline(mod02, col=2)
+  
+  plot(datos$IMC, datos$tabaco)
+  abline(mod03, col=2)
+  
+  plot(datos$IMC, datos$ubes)
+  abline(mod04, col=2)
+  
+  plot(datos$IMC, datos$carneRoja)
+  abline(mod05, col=2)
+  
+  plot(datos$IMC, datos$verduras)
+  abline(mod06, col=2)
+  
+  plot(datos$IMC, datos$deporte)
+  abline(mod07, col=2)
+  
+  plot(datos$IMC, datos$drogas)
+  abline(mod08, col=2)
+  
+  
