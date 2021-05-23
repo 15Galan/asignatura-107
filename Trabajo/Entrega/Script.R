@@ -115,3 +115,26 @@ library("tidyverse")
   abline(mod08)
   
   
+  
+# APARTADO 07 -----------------------------------------------------------------
+  
+  # Funcion para separar los datos en 3 conjuntos (entrenamiento, test, validacion)
+  obtenerConjuntos <- function(datos, p1, p2) {
+    rDf     <- 1:nrow(datos)
+    rTrain  <- sample(rDf, p1 * length(rDf))
+    rTemp   <- setdiff(rDf, rTrain)
+    rTest   <- sample(rTemp, p2 * length(rTemp))
+    rValid  <- setdiff(rTemp, rTest)
+    
+    list(entrenamiento=datos[rTrain,], test=datos[rTest,], validacion=datos[rValid,])  
+  }
+  
+  # Conjuntos obtenidos
+  obtenerConjuntos(datos, .6, .5)   # 0.6 : entrenamiento
+                                    # 0.5 : el resto que no sea entrenamiento
+                                    #     0.4 * 0.5 = 0.2 : test
+                                    #     0.4 * 0.5 = 0.2 : validacion
+                                    #
+                                    # 0.6 + 0.2 + 0.2 = 1
+  
+  
