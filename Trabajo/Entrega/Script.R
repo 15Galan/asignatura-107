@@ -93,25 +93,25 @@ library("tidyverse")
 # APARTADO 06 -----------------------------------------------------------------
   
   # Graficos de dispersion (variables cuantitativas)
-  plot(datos$IMC, datos$edad)
-  abline(mod02, col=2)
+  plot(datos$IMC, datos$edad, col=4)
+  abline(mod02)
   
-  plot(datos$IMC, datos$tabaco)
-  abline(mod03, col=2)
+  plot(datos$IMC, datos$tabaco, col=4)
+  abline(mod03)
   
-  plot(datos$IMC, datos$ubes)
-  abline(mod04, col=2)
+  plot(datos$IMC, datos$ubes, col=4)
+  abline(mod04)
   
-  plot(datos$IMC, datos$carneRoja)
-  abline(mod05, col=2)
+  plot(datos$IMC, datos$carneRoja, col=4)
+  abline(mod05)
   
-  plot(datos$IMC, datos$verduras)
-  abline(mod06, col=2)
+  plot(datos$IMC, datos$verduras, col=4)
+  abline(mod06)
   
-  plot(datos$IMC, datos$deporte)
-  abline(mod07, col=2)
+  plot(datos$IMC, datos$deporte, col=4)
+  abline(mod07)
   
-  plot(datos$IMC, datos$drogas)
-  abline(mod08, col=2)
+  plot(datos$IMC, datos$drogas, col=4)
+  abline(mod08)
   
   
