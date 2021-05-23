@@ -120,9 +120,9 @@ library("tidyverse")
   
   # Funcion para separar los datos en 3 conjuntos (entrenamiento, test, validacion)
   obtenerConjuntos <- function(datos, p1, p2) {
-    rDf     <- 1:nrow(datos)
-    rTrain  <- sample(rDf, p1 * length(rDf))
-    rTemp   <- setdiff(rDf, rTrain)
+    rdatos     <- 1:nrow(datos)
+    rTrain  <- sample(rdatos, p1 * length(rdatos))
+    rTemp   <- setdiff(rdatos, rTrain)
     rTest   <- sample(rTemp, p2 * length(rTemp))
     rValid  <- setdiff(rTemp, rTest)
     
