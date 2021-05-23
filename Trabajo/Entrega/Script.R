@@ -118,9 +118,13 @@ library("tidyverse")
   
 # APARTADO 07 -----------------------------------------------------------------
   
-  # Funcion para separar los datos en 3 conjuntos (entrenamiento, test, validacion)
+  # Separa un conjunto de datos en 3 subconjuntos disjuntos: Entrenamiento, Test
+  # y Validacion; se dividiran segun las proporciones indicadas.
+  # * datos:  conjunto de datos del que obtener los subconjuntos
+  # * p1:     porcentaje del subconjunto de Entrenamiento
+  # * p2:     porcentaje que divide a '1-p1'
   obtenerConjuntos <- function(datos, p1, p2) {
-    rdatos     <- 1:nrow(datos)
+    rdatos  <- 1:nrow(datos)
     rTrain  <- sample(rdatos, p1 * length(rdatos))
     rTemp   <- setdiff(rdatos, rTrain)
     rTest   <- sample(rTemp, p2 * length(rTemp))
@@ -129,11 +133,12 @@ library("tidyverse")
     list(entrenamiento=datos[rTrain,], test=datos[rTest,], validacion=datos[rValid,])  
   }
   
+  
   # Conjuntos obtenidos
-  obtenerConjuntos(datos, .6, .5)   # 0.6 : entrenamiento
-                                    # 0.5 : el resto que no sea entrenamiento
-                                    #     0.4 * 0.5 = 0.2 : test
-                                    #     0.4 * 0.5 = 0.2 : validacion
+  obtenerConjuntos(datos, .6, .5)   # 0.6 : Entrenamiento
+                                    # 0.5 : el resto que no es Entrenamiento
+                                    #     0.4 * 0.5 = 0.2 : Test
+                                    #     0.4 * 0.5 = 0.2 : Validacion
                                     #
                                     # 0.6 + 0.2 + 0.2 = 1
   
@@ -142,90 +147,75 @@ library("tidyverse")
   
   # Declaracion de Funciones --------------------------------------------------
     
-    # Realiza el ajuste lineal sobre un conjunto de datos
+    # Realiza el ajuste lineal sobre un conjunto de datos.
     # * datos:  conjunto de datos
-    # * y    :  variable a explicar
-    # * x    :  variable explicatoria
-    linearAdjust <- function(df, y, x) {
+    # * y:      variable a explicar
+    # * x:      variable explicatoria
+    ajusteLineal <- function(df, y, x) {
       lm(str_c(y, "~", x), df)
     }
     
   
-    # Calcula el coeficiente de determinacion (R²) a partir de un modelo
-    # * datos : conjunto de datos del modelo
+    # Calcula el coeficiente de determinacion (R²) a partir de un modelo.
+    # * datos:  conjunto de datos del modelo
     # * modelo: modelo
-    # * y     : variable a explicar
-    calcR2 <- function(df, mod, y) {
+    # * y:      variable a explicar
+    calcularR2 <- function(df, mod, y) {
       MSE  <- mean((df[[y]] - predict.lm(mod, df)) ^ 2)
       varY <- mean(df[[y]] ^ 2) - mean(df[[y]]) ^ 2
       
       R2   <- 1 - MSE / varY
-      aR2  <- 1 - (1- R2) * (nrow(df) - 1) / (nrow(df) - mod$rank)
+      R2a  <- 1 - (1- R2) * (nrow(df) - 1) / (nrow(df) - mod$rank)
       
       
-      tibble(MSE=MSE, varY=varY, R2=R2, aR2=aR2)
+      tibble(MSE=MSE, varY=varY, R2=R2, R2a=R2a)
     }
     
     
-    # Calcula el coeficiente de determinacion (R²) a partir de un conjunto
-    # de entrenamiento y otro de test
-    # * entrenamiento:  conjunto de entrenamiento
-    # * test         :  conjunto de test
-    # * y            :  variable a explicar
-    # * x            :  variable explicatoria
-    calcModR2 <- function(dfTrain, dfTest, y, x) {
-      mod  <- linearAdjust(dfTrain, y, x)
-      coef <- calcR2(dfTest, mod, y)
+    # Calcula un modelo lineal a partir de un conjunto de entrenamiento, y el
+    # coeficiente de determinación (R²) a partir de un conjunto de test.
+    # * dfTrain:  conjunto de entrenamiento
+    # * dfTest:   conjunto de test
+    # * y:        variable a explicar
+    # * x:        variable explicatoria
+    calcularR2modelo <- function(dfTrain, dfTest, y, x) {
+      modelo        <- ajusteLineal(dfTrain, y, x)
+      coeficientes  <- calcularR2(dfTest, modelo, y)
       
       
-      coef$aR2
+      coeficientes$R2a
     }
     
     
   # Calculos ------------------------------------------------------------------
   
-    # Variable de prediccion
-    varPred <- names(datos[-length(datos)])   # Todas menos 'IMC' (la ultima)
+    # Variables predictoras
+    predictoras <- names(datos[-length(datos)])   # Todas menos 'IMC' (la ultima)
     
     
-    # Separar el conjunto de datos en 3 subconjuntos disjuntos:
-    # * Entrenamiento
-    # * Test
-    # * Validacion
-    dat <- obtenerConjuntos(datos, .6, .5)
+    # Separar los datos: Entrenamiento (60 %), Test (20 %) y Validacion (20 %)
+    conjuntos <- obtenerConjuntos(datos, .6, .5)
     
-    
-    # EJEMPLOS:
-      # 1. calculo de modelo sobre el conjunto de entrenamiento
-      # mod <- linearAdjust(dat$entrenamiento, "IMC", "edad")
-      
-      # 2. calculo de R2 sobre el conjunto de test
-      # calcR2(dat$test, mod, "IMC")
-      
-      # Lo mismo, en un solo paso
-      # calcModR2(dat$entrenamiento, dat$test, "IMC", "edad")
-      
-        # Rango del modelo (cantidad de parametros)
-        # mod$rank
+      # Los 3 subconjuntos son disjuntos
     
     
     # Calcular los 14 R² de los 14 modelos lineales unidimensionales
-    ar2 <- varPred %>% map_dbl(calcModR2, dfTrain=dat$entrenamiento, dfTest=dat$test, y="IMC")
+    r2a <- predictoras %>% map_dbl(calcularR2modelo, dfTrain=conjuntos$entrenamiento, dfTest=conjuntos$test, y="IMC")
     
       # Esto permitira escoger el mejor modelo eliminando fluctuaciones estadisticas
     
     
     # Obtener la mejor variable para una prediccion unidimensional
-    bestVar <- varPred[which.max(ar2)]
+    mejorVariable <- predictoras[which.max(r2a)]
     
     
     # Obtener el mejor modelo usando el conjunto de entrenamiento
-    bestMod <- linearAdjust(dat$entrenamiento, "IMC", bestVar)
+    mejorModelo <- ajusteLineal(conjuntos$entrenamiento, "IMC", mejorVariable)
     
       # Obtener su R² con el conjunto de test
-      calcR2(dat$test, bestMod, "IMC")
+      calcularR2(conjuntos$test, mejorModelo, "IMC")
     
       # Obtener su R² con el conjunto de validacion
-      calcR2(dat$valid, bestMod, "IMC")
+      calcularR2(conjuntos$valid, mejorModelo, "IMC")
       
       
