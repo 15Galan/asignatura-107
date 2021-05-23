@@ -138,3 +138,94 @@ library("tidyverse")
                                     # 0.6 + 0.2 + 0.2 = 1
   
   
+# APARTADO 08 -----------------------------------------------------------------
+  
+  # Declaracion de Funciones --------------------------------------------------
+    
+    # Realiza el ajuste lineal sobre un conjunto de datos
+    # * datos:  conjunto de datos
+    # * y    :  variable a explicar
+    # * x    :  variable explicatoria
+    linearAdjust <- function(df, y, x) {
+      lm(str_c(y, "~", x), df)
+    }
+    
+  
+    # Calcula el coeficiente de determinacion (R²) a partir de un modelo
+    # * datos : conjunto de datos del modelo
+    # * modelo: modelo
+    # * y     : variable a explicar
+    calcR2 <- function(df, mod, y) {
+      MSE  <- mean((df[[y]] - predict.lm(mod, df)) ^ 2)
+      varY <- mean(df[[y]] ^ 2) - mean(df[[y]]) ^ 2
+      
+      R2   <- 1 - MSE / varY
+      aR2  <- 1 - (1- R2) * (nrow(df) - 1) / (nrow(df) - mod$rank)
+      
+      
+      tibble(MSE=MSE, varY=varY, R2=R2, aR2=aR2)
+    }
+    
+    
+    # Calcula el coeficiente de determinacion (R²) a partir de un conjunto
+    # de entrenamiento y otro de test
+    # * entrenamiento:  conjunto de entrenamiento
+    # * test         :  conjunto de test
+    # * y            :  variable a explicar
+    # * x            :  variable explicatoria
+    calcModR2 <- function(dfTrain, dfTest, y, x) {
+      mod  <- linearAdjust(dfTrain, y, x)
+      coef <- calcR2(dfTest, mod, y)
+      
+      
+      coef$aR2
+    }
+    
+    
+  # Calculos ------------------------------------------------------------------
+  
+    # Variable de prediccion
+    varPred <- names(datos[-length(datos)])   # Todas menos 'IMC' (la ultima)
+    
+    
+    # Separar el conjunto de datos en 3 subconjuntos disjuntos:
+    # * Entrenamiento
+    # * Test
+    # * Validacion
+    dat <- obtenerConjuntos(datos, .6, .5)
+    
+    
+    # EJEMPLOS:
+      # 1. calculo de modelo sobre el conjunto de entrenamiento
+      # mod <- linearAdjust(dat$entrenamiento, "IMC", "edad")
+      
+      # 2. calculo de R2 sobre el conjunto de test
+      # calcR2(dat$test, mod, "IMC")
+      
+      # Lo mismo, en un solo paso
+      # calcModR2(dat$entrenamiento, dat$test, "IMC", "edad")
+      
+        # Rango del modelo (cantidad de parametros)
+        # mod$rank
+    
+    
+    # Calcular los 14 R² de los 14 modelos lineales unidimensionales
+    ar2 <- varPred %>% map_dbl(calcModR2, dfTrain=dat$entrenamiento, dfTest=dat$test, y="IMC")
+    
+      # Esto permitira escoger el mejor modelo eliminando fluctuaciones estadisticas
+    
+    
+    # Obtener la mejor variable para una prediccion unidimensional
+    bestVar <- varPred[which.max(ar2)]
+    
+    
+    # Obtener el mejor modelo usando el conjunto de entrenamiento
+    bestMod <- linearAdjust(dat$entrenamiento, "IMC", bestVar)
+    
+      # Obtener su R² con el conjunto de test
+      calcR2(dat$test, bestMod, "IMC")
+    
+      # Obtener su R² con el conjunto de validacion
+      calcR2(dat$valid, bestMod, "IMC")
+      
+      
