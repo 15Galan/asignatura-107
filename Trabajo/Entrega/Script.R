@@ -125,8 +125,8 @@ library("tidyverse")
   
 # APARTADO 07 -----------------------------------------------------------------
   
-  # Separa un conjunto de datos en 3 subconjuntos disjuntos: Entrenamiento, Test
-  # y Validacion; se dividiran segun las proporciones indicadas.
+  # Separa un conjunto de datos en 3 subconjuntos disjuntos: Entrenamiento,
+  # Test y Validacion; que se dividiran segun las proporciones indicadas.
   # * datos:  conjunto de datos del que obtener los subconjuntos
   # * p1:     porcentaje del subconjunto de Entrenamiento
   # * p2:     porcentaje que divide a '1-p1'
@@ -142,12 +142,13 @@ library("tidyverse")
   
   
   # Conjuntos obtenidos
-  obtenerConjuntos(datos, .6, .5)   # 0.6 : Entrenamiento
-                                    # 0.5 : el resto que no es Entrenamiento
-                                    #     0.4 * 0.5 = 0.2 : Test
-                                    #     0.4 * 0.5 = 0.2 : Validacion
-                                    #
-                                    # 0.6 + 0.2 + 0.2 = 1
+  conjuntos <- obtenerConjuntos(datos, .6, .5)  # 0.6 : Entrenamiento
+                                                # 0.5 : el resto
+    # Los 3 subconjuntos son disjuntos          #   0.4 * 0.5 = 0.2 : Test
+                                                #   0.4 * 0.5 = 0.2 : Validacion
+                                                #
+                                                # 0.6 + 0.2 + 0.2 = 1
+  
   
   
 # APARTADO 08 -----------------------------------------------------------------
@@ -200,12 +201,6 @@ library("tidyverse")
     predictoras <- names(datos[-length(datos)])   # Todas menos 'IMC' (la ultima)
     
     
-    # Separar los datos: Entrenamiento (60 %), Test (20 %) y Validacion (20 %)
-    conjuntos <- obtenerConjuntos(datos, .6, .5)
-    
-      # Los 3 subconjuntos son disjuntos
-    
-    
     # Calcular los 14 R² de los 14 modelos lineales unidimensionales
     r2a <- predictoras %>% map_dbl(calcularR2modelo, dfTrain=conjuntos$entrenamiento, dfTest=conjuntos$test, y="IMC")
     
@@ -224,5 +219,4 @@ library("tidyverse")
     
       # Obtener su R² con el conjunto de validacion
       calcularR2(conjuntos$valid, mejorModelo, "IMC")
-      
       
