@@ -43,6 +43,13 @@ library("tidyverse")
   
 # APARTADO 04 -----------------------------------------------------------------
 
+  # Calcula la desviacion tipica.
+  # * datos:  vector con los valores para el calculo
+  dt <- function(datos) {
+    sqrt(mean(datos^2) - mean(datos)^2)
+  }
+  
+  
   # Medias
   datosMedios <- c(peso_M     = mean(datos$peso),
                    altura_M   = mean(datos$altura),
@@ -56,16 +63,16 @@ library("tidyverse")
                    IMC_M      = mean(datos$IMC))
 
   # Desviaciones tipicas
-  datosDesviados <- c(peso_DT     = sd(datos$peso),
-                      altura_DT   = sd(datos$altura),
-                      edad_DT     = sd(datos$edad),
-                      tabaco_DT   = sd(datos$tabaco),
-                      ubes_DT     = sd(datos$ubes),
-                      carne_DT    = sd(datos$carneRoja),
-                      verduras_DT = sd(datos$verduras),
-                      deporte_DT  = sd(datos$deporte),
-                      droga_DT    = sd(datos$drogas),
-                      IMC_DT      = sd(datos$IMC))
+  datosDesviados <- c(peso_DT     = dt(datos$peso),
+                      altura_DT   = dt(datos$altura),
+                      edad_DT     = dt(datos$edad),
+                      tabaco_DT   = dt(datos$tabaco),
+                      ubes_DT     = dt(datos$ubes),
+                      carne_DT    = dt(datos$carneRoja),
+                      verduras_DT = dt(datos$verduras),
+                      deporte_DT  = dt(datos$deporte),
+                      droga_DT    = dt(datos$drogas),
+                      IMC_DT      = dt(datos$IMC))
   
   
   
