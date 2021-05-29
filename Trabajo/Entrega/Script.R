@@ -26,7 +26,7 @@ library("tidyverse")
 # APARTADO 02 -----------------------------------------------------------------
 
   # Se crea la columna 'IMC' segun el enunciado
-  datos$IMC <- datos$peso / datos$altura^2
+  datos <- mutate(datos, IMC = peso / altura^2)
   
   
   
