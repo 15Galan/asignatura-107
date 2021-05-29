@@ -203,9 +203,13 @@ library("tidyverse")
     # Variables predictoras
     predictoras <- names(datos[-length(datos)])   # Todas menos 'IMC' (la ultima)
     
+    # Subconjuntos
+    entrenamiento <- conjuntos$entrenamiento
+    test          <- conjuntos$test
+    validacion    <- conjuntos$validacion
     
     # Calcular los 14 R² de los 14 modelos lineales unidimensionales
-    r2a <- predictoras %>% map_dbl(calcularR2modelo, dfTrain=conjuntos$entrenamiento, dfTest=conjuntos$test, y="IMC")
+    r2a <- predictoras %>% map_dbl(calcularR2modelo, dfTrain=entrenamiento, dfTest=test, y="IMC")
     
       # Esto permitira escoger el mejor modelo eliminando fluctuaciones estadisticas
     
@@ -215,13 +219,13 @@ library("tidyverse")
     
     
     # Obtener el mejor modelo usando el conjunto de entrenamiento
-    mejorModelo <- ajusteLineal(conjuntos$entrenamiento, "IMC", mejorVariable)
+    mejorModelo <- ajusteLineal(entrenamiento, "IMC", mejorVariable)
     
       # Obtener su R² con el conjunto de test
-      calcularR2(conjuntos$test, mejorModelo, "IMC")
+      calcularR2(test, mejorModelo, "IMC")
     
       # Obtener su R² con el conjunto de validacion
-      calcularR2(conjuntos$valid, mejorModelo, "IMC")
+      calcularR2(validacion, mejorModelo, "IMC")
       
       
       
