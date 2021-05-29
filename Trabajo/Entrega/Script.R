@@ -153,14 +153,17 @@ library("tidyverse")
   
 # APARTADO 08 -----------------------------------------------------------------
   
-  # Declaracion de Funciones --------------------------------------------------
+  # Funciones -----------------------------------------------------------------
     
     # Realiza el ajuste lineal sobre un conjunto de datos.
     # * datos:  conjunto de datos
     # * y:      variable a explicar
     # * x:      variable explicatoria
     ajusteLineal <- function(df, y, x) {
-      lm(str_c(y, "~", x), df)
+      
+      # lm(str_c(y, "~", x), df)  # Deprecado: Apartado 09
+      
+      lm(str_c(y, "~", str_c(x, collapse="+")), datos)
     }
     
   
@@ -220,3 +223,71 @@ library("tidyverse")
       # Obtener su R² con el conjunto de validacion
       calcularR2(conjuntos$valid, mejorModelo, "IMC")
       
+      
+      
+# APARTADO 09 -----------------------------------------------------------------
+
+  # Funciones -----------------------------------------------------------------
+  
+    # La funcion 'ajusteLineal()' del apartado 08 se ha modificado para
+    # que pueda reutilizarse en este apartado (ahora es compatible con ambos)
+    
+    
+    # Encuentra el mejor ajuste lineal usando un conjunto de variables y
+    # calculando sus R² ajustados con conjuntos de Entrenamiento y de Test.
+    # * dfTrain:      conjunto de entrenamiento
+    # * dfTest:       conjunto de test
+    # * predictoras:  variables explicatorias del modelo
+    obtenerMejorAjusteLineal <- function(dfTrain, dfTest, predictoras) {
+      
+      # Variables iniciales
+      mejoresVariables  <- character(0)
+      R2a               <- 0
+      
+      # Bucle del algoritmo
+      repeat {
+        # Inicializar
+        R2as      <- map_dbl(predictoras, ~calcularR2modelo(dfTrain, dfTest, "IMC", c(mejoresVariables, .)))
+        i         <- which.max(R2as)
+        mejorR2a  <- R2as[i]
+        
+        if (mejorR2a <= R2a) {
+          break
+        }
+        
+        # Mostrar por la consola los valores calculados durante la ejecucion
+        # cat(sprintf("%1.4f %s\n", mejorR2a, predictoras[i]))
+        
+        # Actualizar los valores para la siguiente iteracion
+        R2a               <- mejorR2a
+        mejoresVariables  <- c(mejoresVariables, predictoras[i])
+        predictoras       <- predictoras[-i]
+      }
+      
+      modelo <- ajusteLineal(dfTrain, "IMC", mejoresVariables)
+      
+      
+      list(variables=mejoresVariables, modelo=modelo)
+    }
+    
+    
+  # Calculos ------------------------------------------------------------------
+  
+    # Unidimensional
+    predictorasSimple <- names(datos[-length(datos)])   # Todas menos 'IMC' (la ultima)
+    mejorModeloSimple <- obtenerMejorAjusteLineal(conjuntos$entrenamiento, conjuntos$test, predictorasSimple)$modelo
+      
+    
+    # Multidimensional
+    predictorasCombo <- crossing(var1=predictoras, var2=predictoras) %>% pmap_chr(str_c, sep=":")
+    mejorModeloCombo <- obtenerMejorAjusteLineal(conjuntos$entrenamiento, conjuntos$test, predictorasCombo)$modelo
+      
+      
+      
+# APARTADO 10 -----------------------------------------------------------------
+  
+  # Modelo unidimensional
+  evaluacionSimple <- calcularR2(conjuntos$validacion, mejorModeloSimple, "IMC")
+  
+  # Modelo multidimensional
+  evaluacionCompleja <- calcularR2(conjuntos$validacion, mejorModeloComplejo, "IMC")
