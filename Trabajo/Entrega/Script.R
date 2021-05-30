@@ -64,25 +64,31 @@ library("tidyverse")
   
 # APARTADO 05 -----------------------------------------------------------------
 
+  # Realiza el ajuste lineal sobre un conjunto de datos.
+  # * datos:  conjunto de datos
+  # * y:      variable a explicar
+  # * x:      variable explicatoria
+  ajusteLineal <- function(df, y, x) {
+    
+    # lm(str_c(y, "~", x), df)  # Deprecado: Apartado 09
+    
+    lm(str_c(y, "~", str_c(x, collapse="+")), datos)
+  }
+  
+  
+  # Variables para los modelos
+  variables <- names(datos[3:14]) # Todas excepto "altura", "peso" e "IMC"
+  
+  
   # Modelos
-  mod01 <- lm(IMC ~ sexo, datos)
-  mod02 <- lm(IMC ~ edad, datos)
-  mod03 <- lm(IMC ~ tabaco, datos)
-  mod04 <- lm(IMC ~ ubes, datos)
-  mod05 <- lm(IMC ~ carneRoja, datos)
-  mod06 <- lm(IMC ~ verduras, datos)
-  mod07 <- lm(IMC ~ deporte, datos)
-  mod08 <- lm(IMC ~ drogas, datos)
-  mod09 <- lm(IMC ~ nivEstPad, datos)
-  mod10 <- lm(IMC ~ nivEstudios, datos)
-  mod11 <- lm(IMC ~ nivIngresos, datos)
+  modelos <- variables %>% map(ajusteLineal, df=datos, y="IMC")
   
-    # Cada variable anterior contiene:
-    # * El coeficiente de regresion (modXX$coefficients).
-    # * El coeficiente de determinacion (summary(modXX)$r.squared).
+  # Coeficientes de regresion y determinacion de los modelos
+  regresion     <- modelos %>% map(coefficients)
+  determinacion <- modelos %>% map(summary) %>% map("r.squared")
   
   
-  
+    
 # APARTADO 06 -----------------------------------------------------------------
   
   # Graficos de dispersion (variables cuantitativas)
@@ -140,18 +146,6 @@ library("tidyverse")
 # APARTADO 08 -----------------------------------------------------------------
   
   # Funciones -----------------------------------------------------------------
-    
-    # Realiza el ajuste lineal sobre un conjunto de datos.
-    # * datos:  conjunto de datos
-    # * y:      variable a explicar
-    # * x:      variable explicatoria
-    ajusteLineal <- function(df, y, x) {
-      
-      # lm(str_c(y, "~", x), df)  # Deprecado: Apartado 09
-      
-      lm(str_c(y, "~", str_c(x, collapse="+")), datos)
-    }
-    
   
     # Calcula el coeficiente de determinacion (R²) a partir de un modelo.
     # * datos:  conjunto de datos del modelo
