@@ -37,7 +37,7 @@ library("tidyverse")
   datos <- na.exclude(datos)
 
     # Esta nueva variable 'datos' es de un tamaño menor,
-    # ya que no cuenta con algunas de sus columnas anteriores
+    # ya que no cuenta con algunas de sus filas anteriores
   
   
   
@@ -68,7 +68,7 @@ library("tidyverse")
   # * datos:  conjunto de datos
   # * y:      variable a explicar
   # * x:      variable explicatoria
-  ajusteLineal <- function(df, y, x) {
+  ajusteLineal <- function(datos, y, x) {
     
     # lm(str_c(y, "~", x), df)  # Deprecado: Apartado 09
     
@@ -81,7 +81,7 @@ library("tidyverse")
   
   
   # Modelos
-  modelos <- variables %>% map(ajusteLineal, df=datos, y="IMC")
+  modelos <- variables %>% map(ajusteLineal, datos=datos, y="IMC")
   
   # Coeficientes de regresion y determinacion de los modelos
   regresion     <- modelos %>% map(coefficients)
@@ -91,6 +91,11 @@ library("tidyverse")
     
 # APARTADO 06 ==================================================================
   
+  # Igual que 'ajusteLineal()', pero devuelve una lista con los valores
+  # 'x' e 'y' del modelo, ademas del propio modelo y los datos.
+  # * datos:  conjunto de datos
+  # * y:      variable a explicar
+  # * x:      variable explicatoria
   ajusteLinealLista <- function(datos, y, x) {
     list(x=x, y=y, modelo=lm(str_c(y, "~", str_c(x, collapse="+")), datos))
   }
@@ -164,7 +169,7 @@ library("tidyverse")
   
   # Funciones ------------------------------------------------------------------
   
-    # Calcula el coeficiente de determinacion (R²) a partir de un modelo.
+    # Calcula los valores: MSE, varY, R2 y R² a partir de un modelo.
     # * datos:  conjunto de datos del modelo
     # * modelo: modelo
     # * y:      variable a explicar
@@ -180,15 +185,15 @@ library("tidyverse")
     }
     
     
-    # Calcula un modelo lineal a partir de un conjunto de entrenamiento, y el
-    # coeficiente de determinación (R²) a partir de un conjunto de test.
+    # Calcula el coeficiente de determinación (R²) ajustado a partir
+    # de un conjunto de entrenamiento y un conjunto de test.
     # * dfTrain:  conjunto de entrenamiento
     # * dfTest:   conjunto de test
-    # * y:        variable a explicar
+    # * y:        variable explicada
     # * x:        variable explicatoria
-    calcularR2modelo <- function(dfTrain, dfTest, y, x) {
-      modelo        <- ajusteLineal(dfTrain, y, x)
-      coeficientes  <- calcularR2(dfTest, modelo, y)
+    calcularR2ajustado  <- function(dfTrain, dfTest, y, x) {
+      modelo            <- ajusteLineal(dfTrain, y, x)
+      coeficientes      <- calcularR2(dfTest, modelo, y)
       
       
       coeficientes$R2a
@@ -206,7 +211,7 @@ library("tidyverse")
     validacion    <- conjuntos$validacion
     
     # Calcular los 14 R² de los 14 modelos lineales unidimensionales
-    r2a <- predictoras %>% map_dbl(calcularR2modelo, dfTrain=entrenamiento, dfTest=test, y="IMC")
+    r2a <- predictoras %>% map_dbl(calcularR2ajustado, dfTrain=entrenamiento, dfTest=test, y="IMC")
     
       # Esto permitira escoger el mejor modelo eliminando fluctuaciones estadisticas
     
@@ -219,10 +224,10 @@ library("tidyverse")
     mejorModelo <- ajusteLineal(entrenamiento, "IMC", mejorVariable)
     
       # Obtener su R² con el conjunto de test
-      calcularR2(test, mejorModelo, "IMC")
+      evaluacionTest <- calcularR2(test, mejorModelo, "IMC")
     
       # Obtener su R² con el conjunto de validacion
-      calcularR2(validacion, mejorModelo, "IMC")
+      evaluacionValidacion <- calcularR2(validacion, mejorModelo, "IMC")
       
       
       
@@ -248,7 +253,7 @@ library("tidyverse")
       # Bucle del algoritmo
       repeat {
         # Inicializar
-        R2as      <- map_dbl(predictoras, ~calcularR2modelo(dfTrain, dfTest, "IMC", c(mejoresVariables, .)))
+        R2as      <- map_dbl(predictoras, ~calcularR2ajustado(dfTrain, dfTest, "IMC", c(mejoresVariables, .)))
         i         <- which.max(R2as)
         mejorR2a  <- R2as[i]
         
@@ -257,7 +262,7 @@ library("tidyverse")
         }
         
         # Mostrar por la consola los valores calculados durante la ejecucion
-        # cat(sprintf("%1.4f %s\n", mejorR2a, predictoras[i]))
+        cat(sprintf("%1.8f %s\n", mejorR2a, predictoras[i]))
         
         # Actualizar los valores para la siguiente iteracion
         R2a               <- mejorR2a
@@ -274,12 +279,12 @@ library("tidyverse")
     
   # Calculos -------------------------------------------------------------------
   
-    # Unidimensional
+    # Variables simples
     predictorasSimple <- names(datos[-length(datos)])   # Todas menos 'IMC' (la ultima)
     mejorModeloSimple <- obtenerMejorAjusteLineal(conjuntos$entrenamiento, conjuntos$test, predictorasSimple)$modelo
       
     
-    # Multidimensional
+    # Variables combinadas
     predictorasCombo <- crossing(var1=predictoras, var2=predictoras) %>% pmap_chr(str_c, sep=":")
     mejorModeloCombo <- obtenerMejorAjusteLineal(conjuntos$entrenamiento, conjuntos$test, predictorasCombo)$modelo
     
@@ -287,9 +292,9 @@ library("tidyverse")
     
 # APARTADO 10 ==================================================================
   
-  # Modelo unidimensional
-  evaluacionSimple <- calcularR2(conjuntos$validacion, mejorModeloSimple, "IMC")
+  # Modelo simple
+  evaluacionSimple <- calcularR2(validacion, mejorModeloSimple, "IMC")
   
-  # Modelo multidimensional
-  evaluacionCompleja <- calcularR2(conjuntos$validacion, mejorModeloCombo, "IMC")
+  # Modelo combinado
+  evaluacionCombo <- calcularR2(validacion, mejorModeloCombo, "IMC")
   
