@@ -91,27 +91,44 @@ library("tidyverse")
     
 # APARTADO 06 -----------------------------------------------------------------
   
-  # Graficos de dispersion (variables cuantitativas)
-  plot(datos$edad, datos$IMC, col=4)
-  abline(mod02)
+  ajusteLinealLista <- function(datos, y, x) {
+    list(x=x, y=y, modelo=lm(str_c(y, "~", str_c(x, collapse="+")), datos))
+  }
   
-  plot(datos$tabaco, datos$IMC, col=4)
-  abline(mod03)
+  # Genera los graficos de dispersion junto a la recta de regresion
+  # * datos:  conjunto de datos del que extraer el grafico
+  # * modelo: modelo del que extraer la recta de regresion
+  dibujarModelos <- function(datos, modelo) {
+    
+    # Crear el fichero de la imagen (la carpeta debe existir)
+    jpeg(str_c("Graficos/", modelo$x, ".jpeg"))
+    
+    # Valores numericos
+    x <- datos[[modelo$x]]
+    y <- datos[[modelo$y]]
+    
+    # Nombres
+    ejeX <- modelo$x
+    ejeY <- modelo$y
+    
+    # Representar los graficos
+    plot(x, y, xlab=ejeX, ylab=ejeY, col=4)
+    
+    # Añadir la recta de regresion solo si es una variable cuantitativa
+    if (is.numeric(datos[[modelo$x]])) {
+      abline(modelo$modelo, col=1)
+    }
+    
+    # Terminar de escribir en el fichero
+    dev.off()
+  }
   
-  plot(datos$ubes, datos$IMC, col=4)
-  abline(mod04)
   
-  plot(datos$carneRoja, datos$IMC, col=4)
-  abline(mod05)
+  # Generar los modelos con los valores necesarios para las graficas
+  modelos <- variables %>% map(ajusteLinealLista, datos=datos, y="IMC")
   
-  plot(datos$verduras, datos$IMC, col=4)
-  abline(mod06)
-  
-  plot(datos$deporte, datos$IMC, col=4)
-  abline(mod07)
-  
-  plot(datos$drogas, datos$IMC, col=4)
-  abline(mod08)
+  # Dibujar todos los modelos
+  modelos %>% walk(~dibujarModelos(datos, .))
   
   
   
