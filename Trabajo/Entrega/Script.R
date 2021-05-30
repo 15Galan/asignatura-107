@@ -1,9 +1,9 @@
-# =============================================================================
+# ==============================================================================
 #
 # Trabajo elaborado por:
 #   * Antonio J. Galán Herrera
 #
-# =============================================================================
+# ==============================================================================
 
 
 # Importacion de paquetes necesarios
@@ -11,7 +11,7 @@ library("tidyverse")
 
 
 
-# APARTADO 01 -----------------------------------------------------------------
+# APARTADO 01 ==================================================================
 
   # Usando la funcion 'read_csv' del paquete 'readr'
   # se exporta el fichero con formato 'tibble'.
@@ -23,14 +23,14 @@ library("tidyverse")
 
 
 
-# APARTADO 02 -----------------------------------------------------------------
+# APARTADO 02 ==================================================================
 
   # Se crea la columna 'IMC' segun el enunciado
   datos <- mutate(datos, IMC = peso / altura^2)
   
   
   
-# APARTADO 03 -----------------------------------------------------------------
+# APARTADO 03 ==================================================================
 
   # Se limpian las columnas con algun NA de los datos,
   # usando la funcion 'na.exclude()' o 'na.omit()'
@@ -41,7 +41,7 @@ library("tidyverse")
   
   
   
-# APARTADO 04 -----------------------------------------------------------------
+# APARTADO 04 ==================================================================
 
   # Calcula la desviacion tipica.
   # * datos:  vector con los valores para el calculo
@@ -62,7 +62,7 @@ library("tidyverse")
   
   
   
-# APARTADO 05 -----------------------------------------------------------------
+# APARTADO 05 ==================================================================
 
   # Realiza el ajuste lineal sobre un conjunto de datos.
   # * datos:  conjunto de datos
@@ -89,7 +89,7 @@ library("tidyverse")
   
   
     
-# APARTADO 06 -----------------------------------------------------------------
+# APARTADO 06 ==================================================================
   
   ajusteLinealLista <- function(datos, y, x) {
     list(x=x, y=y, modelo=lm(str_c(y, "~", str_c(x, collapse="+")), datos))
@@ -132,7 +132,7 @@ library("tidyverse")
   
   
   
-# APARTADO 07 -----------------------------------------------------------------
+# APARTADO 07 ==================================================================
   
   # Separa un conjunto de datos en 3 subconjuntos disjuntos: Entrenamiento,
   # Test y Validacion; que se dividiran segun las proporciones indicadas.
@@ -160,9 +160,9 @@ library("tidyverse")
   
   
   
-# APARTADO 08 -----------------------------------------------------------------
+# APARTADO 08 ==================================================================
   
-  # Funciones -----------------------------------------------------------------
+  # Funciones ------------------------------------------------------------------
   
     # Calcula el coeficiente de determinacion (R²) a partir de un modelo.
     # * datos:  conjunto de datos del modelo
@@ -195,7 +195,7 @@ library("tidyverse")
     }
     
     
-  # Calculos ------------------------------------------------------------------
+  # Calculos -------------------------------------------------------------------
   
     # Variables predictoras
     predictoras <- names(datos[-length(datos)])   # Todas menos 'IMC' (la ultima)
@@ -226,9 +226,9 @@ library("tidyverse")
       
       
       
-# APARTADO 09 -----------------------------------------------------------------
+# APARTADO 09 ==================================================================
 
-  # Funciones -----------------------------------------------------------------
+  # Funciones ------------------------------------------------------------------
   
     # La funcion 'ajusteLineal()' del apartado 08 se ha modificado para
     # que pueda reutilizarse en este apartado (ahora es compatible con ambos)
@@ -272,7 +272,7 @@ library("tidyverse")
     }
     
     
-  # Calculos ------------------------------------------------------------------
+  # Calculos -------------------------------------------------------------------
   
     # Unidimensional
     predictorasSimple <- names(datos[-length(datos)])   # Todas menos 'IMC' (la ultima)
@@ -282,13 +282,14 @@ library("tidyverse")
     # Multidimensional
     predictorasCombo <- crossing(var1=predictoras, var2=predictoras) %>% pmap_chr(str_c, sep=":")
     mejorModeloCombo <- obtenerMejorAjusteLineal(conjuntos$entrenamiento, conjuntos$test, predictorasCombo)$modelo
-      
-      
-      
-# APARTADO 10 -----------------------------------------------------------------
+    
+    
+    
+# APARTADO 10 ==================================================================
   
   # Modelo unidimensional
   evaluacionSimple <- calcularR2(conjuntos$validacion, mejorModeloSimple, "IMC")
   
   # Modelo multidimensional
-  evaluacionCompleja <- calcularR2(conjuntos$validacion, mejorModeloComplejo, "IMC")
+  evaluacionCompleja <- calcularR2(conjuntos$validacion, mejorModeloCombo, "IMC")
+  
