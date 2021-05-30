@@ -50,29 +50,15 @@ library("tidyverse")
   }
   
   
+  # Quitar variables cualitativas (factores) de los datos
+  datosN <- Filter(is.numeric, datos)
+  
+  
   # Medias
-  datosMedios <- c(peso_M     = mean(datos$peso),
-                   altura_M   = mean(datos$altura),
-                   edad_M     = mean(datos$edad),
-                   tabaco_M   = mean(datos$tabaco),
-                   ubes_M     = mean(datos$ubes),
-                   carne_M    = mean(datos$carneRoja),
-                   verduras_M = mean(datos$verduras),
-                   deporte_M  = mean(datos$deporte),
-                   droga_M    = mean(datos$drogas),
-                   IMC_M      = mean(datos$IMC))
+  medias <- colMeans(datosN)
 
   # Desviaciones tipicas
-  datosDesviados <- c(peso_DT     = dt(datos$peso),
-                      altura_DT   = dt(datos$altura),
-                      edad_DT     = dt(datos$edad),
-                      tabaco_DT   = dt(datos$tabaco),
-                      ubes_DT     = dt(datos$ubes),
-                      carne_DT    = dt(datos$carneRoja),
-                      verduras_DT = dt(datos$verduras),
-                      deporte_DT  = dt(datos$deporte),
-                      droga_DT    = dt(datos$drogas),
-                      IMC_DT      = dt(datos$IMC))
+  desviaciones <- map_dbl(datosN, dt)
   
   
   
