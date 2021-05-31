@@ -205,13 +205,9 @@ library("tidyverse")
     # Variables predictoras
     predictoras <- names(datos[-length(datos)])   # Todas menos 'IMC' (la ultima)
     
-    # Subconjuntos
-    entrenamiento <- conjuntos$entrenamiento
-    test          <- conjuntos$test
-    validacion    <- conjuntos$validacion
     
     # Calcular los 14 R² de los 14 modelos lineales unidimensionales
-    r2a <- predictoras %>% map_dbl(calcularR2ajustado, dfTrain=entrenamiento, dfTest=test, y="IMC")
+    r2a <- predictoras %>% map_dbl(calcularR2ajustado, dfTrain=conjuntos$entrenamiento, dfTest=conjuntos$test, y="IMC")
     
       # Esto permitira escoger el mejor modelo eliminando fluctuaciones estadisticas
     
@@ -221,13 +217,13 @@ library("tidyverse")
     
     
     # Obtener el mejor modelo usando el conjunto de entrenamiento
-    mejorModelo <- ajusteLineal(entrenamiento, "IMC", mejorVariable)
+    mejorModelo <- ajusteLineal(conjuntos$entrenamiento, "IMC", mejorVariable)
     
       # Obtener su R² con el conjunto de test
-      evaluacionTest <- calcularR2(test, mejorModelo, "IMC")
+      evaluacionTest <- calcularR2(conjuntos$test, mejorModelo, "IMC")
     
       # Obtener su R² con el conjunto de validacion
-      evaluacionValidacion <- calcularR2(validacion, mejorModelo, "IMC")
+      evaluacionValidacion <- calcularR2(conjuntos$validacion, mejorModelo, "IMC")
       
       
       
@@ -235,7 +231,7 @@ library("tidyverse")
 
   # Funciones ------------------------------------------------------------------
   
-    # La funcion 'ajusteLineal()' del apartado 08 se ha modificado para
+    # La funcion 'ajusteLineal()' del apartado 05 se ha modificado para
     # que pueda reutilizarse en este apartado (ahora es compatible con ambos)
     
     
@@ -279,22 +275,12 @@ library("tidyverse")
     
   # Calculos -------------------------------------------------------------------
   
-    # Variables simples
-    predictorasSimple <- names(datos[-length(datos)])   # Todas menos 'IMC' (la ultima)
-    mejorModeloSimple <- obtenerMejorAjusteLineal(conjuntos$entrenamiento, conjuntos$test, predictorasSimple)$modelo
-      
-    
-    # Variables combinadas
-    predictorasCombo <- crossing(var1=predictoras, var2=predictoras) %>% pmap_chr(str_c, sep=":")
-    mejorModeloCombo <- obtenerMejorAjusteLineal(conjuntos$entrenamiento, conjuntos$test, predictorasCombo)$modelo
+    predictoras <- names(datos[-length(datos)])   # Todas menos 'IMC' (la ultima)
+    mejorModelo <- obtenerMejorAjusteLineal(conjuntos$entrenamiento, conjuntos$test, predictoras)$modelo
     
     
     
 # APARTADO 10 ==================================================================
   
-  # Modelo simple
-  evaluacionSimple <- calcularR2(validacion, mejorModeloSimple, "IMC")
-  
-  # Modelo combinado
-  evaluacionCombo <- calcularR2(validacion, mejorModeloCombo, "IMC")
+  evaluacion <- calcularR2(conjuntos$validacion, mejorModelo, "IMC")
   
